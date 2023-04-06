@@ -155,6 +155,7 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
                             $world->setBlockAt($i,0,$k,VanillaBlocks::GOLD());
                             $world->setBlockAt($i,63,$k,VanillaBlocks::GOLD());
+                            //
                         }
                     }
                     break;
