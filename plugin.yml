@@ -1,0 +1,25 @@
+#╔════╦═══╦══╦╗╔╦╗─╔╦══╦══╗╔══╦════╦╗╔╗
+#╚═╗╔═╣╔══╣╔═╣║║║╚═╝║╔╗║╔╗║║╔╗╠═╗╔═╣║║║
+#──║║─║╚══╣║─║╚╝║╔╗─║║║║╚╝╚╣║║║─║║─║╚╝║
+#──║║─║╔══╣║─║╔╗║║╚╗║║║║╔═╗║║║║─║║─╚═╗║
+#──║║─║╚══╣╚═╣║║║║─║║╚╝║╚═╝║╚╝║─║║──╔╝║
+#──╚╝─╚═══╩══╩╝╚╩╝─╚╩══╩═══╩══╝─╚╝──╚═╝
+
+name: AntWarsNeo
+main: TechnoBoty\AntWarsNeo\Main
+version: 1.0.0-Alpha
+api: 5.0.0
+author: TechnoBoty
+author-discord-account: TechnoBoty#4211
+commands:
+  gen:
+    description: "Сгенерировать карту для антварса"
+    permission: gen.use
+  tpa:
+    description: "Тепнуться в мир,который сгенерил"
+    permission: tepe.use
+permissions:
+  gen.use:
+    default: op
+  tepe.use:
+    default: op
