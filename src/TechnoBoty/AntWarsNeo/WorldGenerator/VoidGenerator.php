@@ -24,32 +24,42 @@ class VoidGenerator extends Generator{
                case 2:
                    for($i = ($chunkX * 16) - 16;$i <= ($chunkX * 16 - 1);$i++){
                        for($k = ($chunkZ * 16) - 16;$k <= ($chunkZ * 16 - 1);$k++){
-                           $world->setBlockAt($i,0,$k,VanillaBlocks::SNOW());
-                           $world->setBlockAt($i,63,$k,VanillaBlocks::SNOW());
+                           $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
+                           $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
+                           if($k == $chunkZ * 16 - 1){
+                               for($j = 1;$j < 63;$j++){
+                                   $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                               }
+                           }
                        }
                    }
                    break;
                case 1:
                    for($i = ($chunkX * 16) - 16;$i <= ($chunkX * 16 - 1);$i++){
                        for($k = ($chunkZ * 16) - 16;$k <= ($chunkZ * 16 - 1);$k++){
-                           $world->setBlockAt($i,0,$k,VanillaBlocks::REDSTONE());
-                           $world->setBlockAt($i,63,$k,VanillaBlocks::REDSTONE());
+                           $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
+                           $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
                        }
                    }
                    break;
                case -1:
                    for($i = ($chunkX * 16) - 16;$i <= ($chunkX * 16 - 1);$i++){
                        for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
-                           $world->setBlockAt($i,0,$k,VanillaBlocks::COAL());
-                           $world->setBlockAt($i,63,$k,VanillaBlocks::COAL());
+                           $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
+                           $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
                        }
                    }
                    break;
                case -2:
                    for($i = ($chunkX * 16) - 16;$i <= ($chunkX * 16 - 1);$i++){
                        for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
-                           $world->setBlockAt($i,0,$k,VanillaBlocks::IRON());
-                           $world->setBlockAt($i,63,$k,VanillaBlocks::IRON());
+                           $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
+                           $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
+                           if($k == $chunkZ * 16){
+                               for($j = 1;$j < 63;$j++){
+                                   $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                               }
+                           }
                        }
                    }
                    break;
@@ -59,32 +69,42 @@ class VoidGenerator extends Generator{
                 case 2:
                     for($i = ($chunkX * 16) + 15;$i >= ($chunkX * 16);$i--){
                         for($k = ($chunkZ * 16) - 16;$k <= ($chunkZ * 16 - 1);$k++){
-                            $world->setBlockAt($i,0,$k,VanillaBlocks::GLOWSTONE());
-                            $world->setBlockAt($i,63,$k,VanillaBlocks::GLOWSTONE());
+                            $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
+                            $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
+                            if($k == $chunkZ * 16 - 1){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
                         }
                     }
                     break;
                 case 1:
                     for($i = ($chunkX * 16) + 15;$i >= ($chunkX * 16);$i--){
                         for($k = ($chunkZ * 16) - 16;$k <= ($chunkZ * 16 - 1);$k++){
-                            $world->setBlockAt($i,0,$k,VanillaBlocks::COAL());
-                            $world->setBlockAt($i,63,$k,VanillaBlocks::COAL());
+                            $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
+                            $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
                         }
                     }
                     break;
                 case -1:
                     for($i = ($chunkX * 16) + 15;$i >= ($chunkX * 16);$i--){
                         for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
-                            $world->setBlockAt($i,0,$k,VanillaBlocks::IRON());
-                            $world->setBlockAt($i,63,$k,VanillaBlocks::IRON());
+                            $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
+                            $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
                         }
                     }
                     break;
                 case -2:
                     for($i = ($chunkX * 16) + 15;$i >= ($chunkX * 16);$i--){
                         for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
-                            $world->setBlockAt($i,0,$k,VanillaBlocks::REDSTONE());
-                            $world->setBlockAt($i,63,$k,VanillaBlocks::REDSTONE());
+                            $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
+                            $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
+                            if($k == $chunkZ * 16){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
                         }
                     }
                     break;
@@ -94,8 +114,18 @@ class VoidGenerator extends Generator{
                 case 2:
                     for($i = ($chunkX * 16) + 15; $i >= ($chunkX * 16); $i--) {
                         for($k = ($chunkZ * 16) - 16; $k <= ($chunkZ * 16 - 1); $k++) {
-                            $world->setBlockAt($i, 0, $k, VanillaBlocks::OAK_LOG());
-                            $world->setBlockAt($i, 63, $k, VanillaBlocks::OAK_LOG());
+                            $world->setBlockAt($i, 0, $k, VanillaBlocks::BEDROCK());
+                            $world->setBlockAt($i, 63, $k, VanillaBlocks::BEDROCK());
+                            if($i == $chunkX * 16){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
+                            if($k == $chunkZ * 16 - 1){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
                         }
                     }
                     break;
@@ -104,22 +134,42 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) - 16; $k <= ($chunkZ * 16 - 1); $k++) {
                             $world->setBlockAt($i, 0, $k, VanillaBlocks::BEDROCK());
                             $world->setBlockAt($i, 63, $k, VanillaBlocks::BEDROCK());
+                            if($i == $chunkX * 16){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
                         }
                     }
                     break;
                 case -1:
                     for($i = ($chunkX * 16) + 15; $i >= ($chunkX * 16); $i--) {
                         for($k = ($chunkZ * 16) + 15; $k >= ($chunkZ * 16); $k--) {
-                            $world->setBlockAt($i, 0, $k, VanillaBlocks::MELON());
-                            $world->setBlockAt($i, 63, $k, VanillaBlocks::MELON());
+                            $world->setBlockAt($i, 0, $k, VanillaBlocks::BEDROCK());
+                            $world->setBlockAt($i, 63, $k, VanillaBlocks::BEDROCK());
+                            if($i == $chunkX * 16){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
                         }
                     }
                     break;
                 case -2:
                     for($i = ($chunkX * 16) + 15; $i >= ($chunkX * 16); $i--) {
                         for($k = ($chunkZ * 16) + 15; $k >= ($chunkZ * 16); $k--) {
-                            $world->setBlockAt($i, 0, $k, VanillaBlocks::GOLD());
-                            $world->setBlockAt($i, 63, $k, VanillaBlocks::GOLD());
+                            $world->setBlockAt($i, 0, $k, VanillaBlocks::BEDROCK());
+                            $world->setBlockAt($i, 63, $k, VanillaBlocks::BEDROCK());
+                            if($i == $chunkX * 16){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
+                            if($k == $chunkZ * 16){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
                         }
                     }
                     break;
@@ -129,8 +179,18 @@ class VoidGenerator extends Generator{
                 case 2:
                     for($i = ($chunkX * 16) - 16;$i <= ($chunkX * 16 - 1);$i++){
                         for($k = ($chunkZ * 16) - 16;$k <= ($chunkZ * 16 - 1);$k++){
-                            $world->setBlockAt($i,0,$k,VanillaBlocks::OAK_LOG());
-                            $world->setBlockAt($i,63,$k,VanillaBlocks::OAK_LOG());
+                            $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
+                            $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
+                            if($i == $chunkX * 16 - 1){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
+                            if($k == $chunkZ * 16 - 1){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
                         }
                     }
                     break;
@@ -139,23 +199,42 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) - 16;$k <= ($chunkZ * 16 - 1);$k++){
                             $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
                             $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
+                            if($i == $chunkX * 16 - 1){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
                         }
                     }
                     break;
                 case -1:
                     for($i = ($chunkX * 16) - 16;$i <= ($chunkX * 16 - 1);$i++){
                         for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
-                            $world->setBlockAt($i,0,$k,VanillaBlocks::MELON());
-                            $world->setBlockAt($i,63,$k,VanillaBlocks::MELON());
+                            $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
+                            $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
+                            if($i == $chunkX * 16 - 1){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
                         }
                     }
                     break;
                 case -2:
                     for($i = ($chunkX * 16) - 16;$i <= ($chunkX * 16 - 1);$i++){
                         for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
-                            $world->setBlockAt($i,0,$k,VanillaBlocks::GOLD());
-                            $world->setBlockAt($i,63,$k,VanillaBlocks::GOLD());
-                            //
+                            $world->setBlockAt($i,0,$k,VanillaBlocks::BEDROCK());
+                            $world->setBlockAt($i,63,$k,VanillaBlocks::BEDROCK());
+                            if($i == $chunkX * 16 - 1){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
+                            if($k == $chunkZ * 16){
+                                for($j = 1;$j < 63;$j++){
+                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
+                                }
+                            }
                         }
                     }
                     break;

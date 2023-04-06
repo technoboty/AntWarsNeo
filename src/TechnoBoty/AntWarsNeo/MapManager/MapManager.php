@@ -37,7 +37,6 @@ class MapManager{
             }
         },200);
         $this->name = $name;
-        //
     }
     public function generateWorldName() : string{
         $list = str_split($this->pattern,1);
