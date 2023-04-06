@@ -43,7 +43,7 @@ class MapManager{
         $name = "";
         do{
             $name = "";
-            for($i=0;$i <= 20;$i++){
+            for($i=0;$i <= 10;$i++){
                 $name .= $list[mt_rand(0,count($list) - 1)];
             }
         }while(!$this->validateWorldName($name));
