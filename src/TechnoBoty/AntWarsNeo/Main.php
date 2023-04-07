@@ -32,7 +32,7 @@ class Main extends PluginBase{
     }
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool{
         if($command->getName() == "gen"){
-            MapManager::getInstance()->addNewMap(50);
+            MapManager::getInstance()->addNewMap();
         }elseif($command->getName() == "tpa"){
             (Server::getInstance()->getPlayerExact($sender->getName()))->teleport(new Position(0,200,0,Server::getInstance()->getWorldManager()->getWorldByName(MapManager::getInstance()->name)));
         }

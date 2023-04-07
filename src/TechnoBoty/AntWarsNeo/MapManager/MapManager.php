@@ -22,21 +22,13 @@ class MapManager{
     public function __construct(){
         self::setInstance($this);
     }
-    public function addNewMap(int $size) : void{
+    public function addNewMap() : Map{
         $name = $this->generateWorldName();
         $manager = Server::getInstance()->getWorldManager();
         $manager->generateWorld($name,(new WorldCreationOptions())->setGeneratorClass(VoidGenerator::class));
         $manager->loadWorld($name);
-        $map = $this->maps[] = new Map($size,$name);
-        Main::getInstance()->getScheduler()->scheduleDelayedTask(new class($map) extends Task{
-
-            public function __construct(private Map $map){}
-
-            public function onRun(): void {
-                $this->map->unlockFlag();
-            }
-        },200);
         $this->name = $name;
+        return new Map($name);
     }
     public function generateWorldName() : string{
         $list = str_split($this->pattern,1);
