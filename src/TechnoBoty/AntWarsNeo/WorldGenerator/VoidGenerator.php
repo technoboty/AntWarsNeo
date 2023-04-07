@@ -295,7 +295,7 @@ class VoidGenerator extends Generator{
                     break;
                 case -2:
                     //ang
-                    for($i = ($chunkX * 16) - 16;$i <= ($chunkX * 16 - 1);$i++){
+                    for($i = ($chunkX * 16) - 16;$i < ($chunkX * 16);$i++){
                         for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
                             $this->onSetBlocks($i,$k,$world);
                             if($i == $chunkX * 16 - 1){
@@ -314,7 +314,89 @@ class VoidGenerator extends Generator{
             }
         }
     }
-    public function populateChunk(ChunkManager $world, int $chunkX, int $chunkZ) : void{}
+    public function populateChunk(ChunkManager $world, int $chunkX, int $chunkZ) : void{
+        if($chunkX == 2){
+            if($chunkZ == 2){
+                for($i = ($chunkX * 16) - 10;$i < ($chunkX * 16 - 5);$i++){
+                    for($k = ($chunkZ * 16) - 10;$k <= ($chunkZ * 16 - 6);$k++){
+                        for($j = 56;$j < 61;$j++){
+                            if($j == 60 || $j == 56){
+                                switch(mt_rand(1,2)){
+                                    case 1:
+                                        $world->setBlockAt($i,$j,$k,VanillaBlocks::COBBLESTONE());
+                                        break;
+                                    case 2:
+                                        $world->setBlockAt($i,$j,$k,VanillaBlocks::OAK_LOG());
+                                        break;
+                                }
+                            } else {
+                                $world->setBlockAt($i, $j, $k, VanillaBlocks::AIR());
+                            }
+                        }
+                    }
+                }
+            }elseif($chunkZ == -2){
+                for($i = ($chunkX * 16) - 10;$i < ($chunkX * 16 - 5);$i++){
+                    for($k = ($chunkZ * 16) + 9;$k >= ($chunkZ * 16 + 5);$k--){
+                        for($j = 3;$j < 8;$j++){
+                            if($j == 3 || $j == 7){
+                                switch(mt_rand(1,2)){
+                                    case 1:
+                                        $world->setBlockAt($i,$j,$k,VanillaBlocks::COBBLESTONE());
+                                        break;
+                                    case 2:
+                                        $world->setBlockAt($i,$j,$k,VanillaBlocks::OAK_LOG());
+                                        break;
+                                }
+                            } else {
+                                $world->setBlockAt($i, $j, $k, VanillaBlocks::AIR());
+                            }
+                        }
+                    }
+                }
+            }
+        }elseif($chunkX == -2){
+            if($chunkZ == 2){
+                for($i = ($chunkX * 16) + 9; $i >= ($chunkX * 16 + 5); $i--) {
+                    for($k = ($chunkZ * 16) - 10; $k < ($chunkZ * 16 - 5); $k++) {
+                        for($j = 3;$j < 8;$j++){
+                            if($j == 3 || $j == 7){
+                                switch(mt_rand(1,2)){
+                                    case 1:
+                                        $world->setBlockAt($i,$j,$k,VanillaBlocks::COBBLESTONE());
+                                        break;
+                                    case 2:
+                                        $world->setBlockAt($i,$j,$k,VanillaBlocks::OAK_LOG());
+                                        break;
+                                }
+                            } else {
+                                $world->setBlockAt($i, $j, $k, VanillaBlocks::AIR());
+                            }
+                        }
+                    }
+                }
+            }elseif($chunkZ == -2){
+                for($i = ($chunkX * 16) + 9; $i >= ($chunkX * 16 + 5); $i--) {
+                    for($k = ($chunkZ * 16) + 9; $k >= ($chunkZ * 16 + 5); $k--) {
+                        for($j = 56;$j < 61;$j++){
+                            if($j == 60 || $j == 56){
+                                switch(mt_rand(1,2)){
+                                    case 1:
+                                        $world->setBlockAt($i,$j,$k,VanillaBlocks::COBBLESTONE());
+                                        break;
+                                    case 2:
+                                        $world->setBlockAt($i,$j,$k,VanillaBlocks::OAK_LOG());
+                                        break;
+                                }
+                            } else {
+                                $world->setBlockAt($i, $j, $k, VanillaBlocks::AIR());
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
 
     private function onSetBlocks(int $i,int $k,ChunkManager $world) : void{
         for($j = 0;$j < 64;$j++){

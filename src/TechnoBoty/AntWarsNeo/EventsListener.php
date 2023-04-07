@@ -2,6 +2,7 @@
 
 namespace TechnoBoty\AntWarsNeo;
 
+use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\Listener;
 use pocketmine\Server;
@@ -17,6 +18,10 @@ class EventsListener implements Listener{
     public function onPlace(BlockPlaceEvent $event){
         $p = $event->getBlockAgainst()->getPosition();
         Server::getInstance()->broadcastMessage($p->getFloorX()." | ".$p->getFloorY()." | ".$p->getFloorZ());
+    }
+    public function onBreak(BlockBreakEvent $event){
+        $world = $event->getBlock()->getPosition()->getWorld();
+        //TODO
     }
 
 }
