@@ -21,6 +21,7 @@ class Map {
 
     public function deleteWorld(string $path = ""): void {
         if($path == "") {
+            Server::getInstance()->getWorldManager()->unloadWorld($this->world);
             $folder = Server::getInstance()->getDataPath() . "worlds/" . $this->world->getFolderName() . "/";
             foreach(scandir($folder) as $file) {
                 if($file == "." || $file == "..") {

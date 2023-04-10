@@ -13,12 +13,15 @@ class ArenaManager{
         self::setInstance($this);
     }
     public function getArena() : Arena{
-        if(count($this->arenas) < 1){
-            $arena = new Arena();
-            $this->arenas[] = $arena;
-            return $arena;
-        } else {
-            return $this->arenas[0];
+        if(count($this->arenas) >= 1) {
+            foreach($this->arenas as $arena) {
+                if($arena->alreadyJoin()) {
+                    return $arena;
+                }
+            }
         }
+        $arena = new Arena();
+        $this->arenas[] = $arena;
+        return $arena;
     }
 }

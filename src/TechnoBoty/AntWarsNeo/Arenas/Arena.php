@@ -2,6 +2,7 @@
 
 namespace TechnoBoty\AntWarsNeo\Arenas;
 
+use pocketmine\block\VanillaBlocks;
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\player\Player;
 use pocketmine\Server;
@@ -32,9 +33,11 @@ class Arena{
         $this->stage = self::WAIT_STAGE;
     }
     public function join(Player $player) : void{
+        if($this->lockedFlag){return;}
         if(!array_key_exists($player->getName(),$this->players)){
             $this->players[$player->getName()] = $player;
-            $player->teleport(new Position(0,100,0,$this->arena->getWorld()));
+            $player->teleport(new Position(0,64,0,$this->arena->getWorld()));
+            if(count($this->players) == self::MAX_PLAYERS){$this->lockedFlag = TRUE;}
         }
     }
     public function quit(Player $player) : void{
@@ -43,5 +46,8 @@ class Arena{
         }
         $player->teleport(new Position(0,100,0,Server::getInstance()->getWorldManager()->getDefaultWorld()));
         $this->arena->deleteWorld();
+    }
+    public function alreadyJoin() : bool{
+        return !$this->lockedFlag;
     }
 }
