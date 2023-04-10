@@ -22,13 +22,13 @@ class MapManager{
     public function __construct(){
         self::setInstance($this);
     }
-    public function addNewMap() : Map{
+    public function addNewArena() : Map{
         $name = $this->generateWorldName();
         $manager = Server::getInstance()->getWorldManager();
         $manager->generateWorld($name,(new WorldCreationOptions())->setGeneratorClass(VoidGenerator::class));
         $manager->loadWorld($name);
         $this->name = $name;
-        return new Map($name);
+        return new Map(Server::getInstance()->getWorldManager()->getWorldByName($name));
     }
     public function generateWorldName() : string{
         $list = str_split($this->pattern,1);

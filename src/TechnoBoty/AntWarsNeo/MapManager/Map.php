@@ -9,16 +9,13 @@ use TechnoBoty\AntWarsNeo\Utils\ChunkSerializer;
 
 class Map {
 
-    private string $world;
+    private World $world;
     private bool $flag = FALSE;
 
-    public function __construct(string $world){
+    public function __construct(World $world){
         $this->world = $world;
     }
-    public function getLoadedWorldByName(string $name): ?World {
-        if(!Server::getInstance()->getWorldManager()->isWorldLoaded($name)){
-            Server::getInstance()->getWorldManager()->loadWorld($name, true);
-        }
-        return Server::getInstance()->getWorldManager()->getWorldByName($name);
+    public function getWorld() : World{
+        return $this->world;
     }
 }

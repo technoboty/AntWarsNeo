@@ -12,4 +12,7 @@ class ArenaManager{
     public function __construct(){
         self::setInstance($this);
     }
+    public function getArena() : Arena{
+        return new Arena();
+    }
 }

@@ -12,12 +12,15 @@ use pocketmine\utils\SingletonTrait;
 use pocketmine\world\generator\GeneratorManager;
 use pocketmine\world\Position;
 use pocketmine\world\WorldCreationOptions;
+use TechnoBoty\AntWarsNeo\Arenas\ArenaManager;
 use TechnoBoty\AntWarsNeo\MapManager\MapManager;
 use TechnoBoty\AntWarsNeo\WorldGenerator\VoidGenerator;
 
 class Main extends PluginBase{
 
     private Config $config;
+
+    private ArenaManager $manager;
 
     use SingletonTrait;
 
@@ -28,11 +31,13 @@ class Main extends PluginBase{
         $this->config = new Config($this->getDataFolder()."settings/config.json",Config::JSON);
         Server::getInstance()->getPluginManager()->registerEvents(new EventsListener(),$this);
         GeneratorManager::getInstance()->addGenerator(VoidGenerator::class,"antwars",fn() => NULL,TRUE);
+        $this->manager = ArenaManager::getInstance();
         parent::onEnable();
     }
     public function onCommand(CommandSender $sender, Command $command, string $label, array $args): bool{
         if($command->getName() == "gen"){
-            MapManager::getInstance()->addNewMap();
+            $arena  = $this->manager->getArena();
+            $arena->join($sender);
         }elseif($command->getName() == "tpa"){
             (Server::getInstance()->getPlayerExact($sender->getName()))->teleport(new Position(0,200,0,Server::getInstance()->getWorldManager()->getWorldByName(MapManager::getInstance()->name)));
         }
