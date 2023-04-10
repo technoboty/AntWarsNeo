@@ -13,6 +13,12 @@ class ArenaManager{
         self::setInstance($this);
     }
     public function getArena() : Arena{
-        return new Arena();
+        if(count($this->arenas) < 1){
+            $arena = new Arena();
+            $this->arenas[] = $arena;
+            return $arena;
+        } else {
+            return $this->arenas[0];
+        }
     }
 }

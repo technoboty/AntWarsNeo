@@ -4,6 +4,7 @@ namespace TechnoBoty\AntWarsNeo\Arenas;
 
 use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\player\Player;
+use pocketmine\Server;
 use pocketmine\world\Position;
 use TechnoBoty\AntWarsNeo\MapManager\Map;
 use TechnoBoty\AntWarsNeo\MapManager\MapManager;
@@ -35,5 +36,12 @@ class Arena{
             $this->players[$player->getName()] = $player;
             $player->teleport(new Position(0,100,0,$this->arena->getWorld()));
         }
+    }
+    public function quit(Player $player) : void{
+        if(array_key_exists($player->getName(),$this->players)){
+            unset($this->players[$player->getName()]);
+        }
+        $player->teleport(new Position(0,100,0,Server::getInstance()->getWorldManager()->getDefaultWorld()));
+        $this->arena->deleteWorld();
     }
 }

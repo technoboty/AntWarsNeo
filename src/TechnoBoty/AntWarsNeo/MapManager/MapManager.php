@@ -28,7 +28,9 @@ class MapManager{
         $manager->generateWorld($name,(new WorldCreationOptions())->setGeneratorClass(VoidGenerator::class));
         $manager->loadWorld($name);
         $this->name = $name;
-        return new Map(Server::getInstance()->getWorldManager()->getWorldByName($name));
+        $map = new Map(Server::getInstance()->getWorldManager()->getWorldByName($name));
+        $this->maps[] = $map;
+        return $map;
     }
     public function generateWorldName() : string{
         $list = str_split($this->pattern,1);

@@ -111,7 +111,7 @@ class VoidGenerator extends Generator{
                        for($k = ($chunkZ * 16) - 16;$k <= ($chunkZ * 16 - 1);$k++){
                            $this->onSetBlocks($i,$k,$world);
                            if($k == $chunkZ * 16 - 1){
-                               for($j = 1;$j < 63;$j++){
+                               for($j = 1;$j < 70;$j++){
                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                }
                            }
@@ -137,7 +137,7 @@ class VoidGenerator extends Generator{
                        for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
                            $this->onSetBlocks($i,$k,$world);
                            if($k == $chunkZ * 16){
-                               for($j = 1;$j < 63;$j++){
+                               for($j = 1;$j < 70;$j++){
                                    $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                }
                            }
@@ -152,7 +152,7 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) - 16;$k <= ($chunkZ * 16 - 1);$k++){
                             $this->onSetBlocks($i,$k,$world);
                             if($k == $chunkZ * 16 - 1){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
@@ -178,7 +178,7 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
                             $this->onSetBlocks($i,$k,$world);
                             if($k == $chunkZ * 16){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
@@ -194,12 +194,12 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) - 16; $k <= ($chunkZ * 16 - 1); $k++) {
                             $this->onSetBlocks($i,$k,$world);
                             if($i == $chunkX * 16){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
                             if($k == $chunkZ * 16 - 1){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
@@ -211,7 +211,7 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) - 16; $k <= ($chunkZ * 16 - 1); $k++) {
                             $this->onSetBlocks($i,$k,$world);
                             if($i == $chunkX * 16){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
@@ -223,7 +223,7 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) + 15; $k >= ($chunkZ * 16); $k--) {
                             $this->onSetBlocks($i,$k,$world);
                             if($i == $chunkX * 16){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
@@ -236,12 +236,12 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) + 15; $k >= ($chunkZ * 16); $k--) {
                             $this->onSetBlocks($i,$k,$world);
                             if($i == $chunkX * 16){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
                             if($k == $chunkZ * 16){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
@@ -257,12 +257,12 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) - 16;$k <= ($chunkZ * 16 - 1);$k++){
                             $this->onSetBlocks($i,$k,$world);
                             if($i == $chunkX * 16 - 1){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
                             if($k == $chunkZ * 16 - 1){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
@@ -274,7 +274,7 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) - 16;$k <= ($chunkZ * 16 - 1);$k++){
                             $this->onSetBlocks($i,$k,$world);
                             if($i == $chunkX * 16 - 1){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
@@ -286,7 +286,7 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
                             $this->onSetBlocks($i,$k,$world);
                             if($i == $chunkX * 16 - 1){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
@@ -299,12 +299,12 @@ class VoidGenerator extends Generator{
                         for($k = ($chunkZ * 16) + 15;$k >= ($chunkZ * 16);$k--){
                             $this->onSetBlocks($i,$k,$world);
                             if($i == $chunkX * 16 - 1){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
                             if($k == $chunkZ * 16){
-                                for($j = 1;$j < 63;$j++){
+                                for($j = 1;$j < 70;$j++){
                                     $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
                                 }
                             }
@@ -399,12 +399,14 @@ class VoidGenerator extends Generator{
     }
 
     private function onSetBlocks(int $i,int $k,ChunkManager $world) : void{
-        for($j = 0;$j < 64;$j++){
+        for($j = 0;$j < 71;$j++){
             if($j == 0){
                 $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
-            }elseif($j == 63){
-                $world->setBlockAt($i,$j,$k,VanillaBlocks::BEDROCK());
-            } else {
+            }elseif($j == 63) {
+                $world->setBlockAt($i, $j, $k, VanillaBlocks::BARRIER());
+            }elseif($j == 70){
+                $world->setBlockAt($i, $j, $k, VanillaBlocks::BARRIER());
+            } elseif($j < 63) {
                 $world->setBlockAt($i,$j,$k,$this->blocks[array_rand($this->blocks)]);
             }
         }

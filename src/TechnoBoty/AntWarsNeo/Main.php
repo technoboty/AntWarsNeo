@@ -39,7 +39,7 @@ class Main extends PluginBase{
             $arena  = $this->manager->getArena();
             $arena->join($sender);
         }elseif($command->getName() == "tpa"){
-            (Server::getInstance()->getPlayerExact($sender->getName()))->teleport(new Position(0,200,0,Server::getInstance()->getWorldManager()->getWorldByName(MapManager::getInstance()->name)));
+            $this->manager->getArena()->quit($sender);
         }
         return parent::onCommand($sender, $command, $label, $args);
     }
