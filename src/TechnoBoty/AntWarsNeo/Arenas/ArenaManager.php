@@ -2,12 +2,15 @@
 
 namespace TechnoBoty\AntWarsNeo\Arenas;
 
+use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\player\Player;
 use pocketmine\scheduler\Task;
 use pocketmine\utils\SingletonTrait;
 use TechnoBoty\AntWarsNeo\Main;
 
 class ArenaManager{
 
+    /** @var Arena[] $arenas  */
     private array $arenas = [];
 
     use SingletonTrait;
@@ -42,5 +45,15 @@ class ArenaManager{
                 }
             },100);
         }
+    }
+    public function getArenaByPlayer(Player $player) : ?Arena{
+        foreach($this->arenas as $arena){
+            foreach($arena->getPlayers() as $name => $player){
+                if($player->getName() == $name){
+                    return $arena;
+                }
+            }
+        }
+        return null;
     }
 }

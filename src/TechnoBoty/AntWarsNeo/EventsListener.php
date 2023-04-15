@@ -3,16 +3,24 @@
 namespace TechnoBoty\AntWarsNeo;
 
 use pocketmine\block\TNT;
+use pocketmine\block\utils\DyeColor;
 use pocketmine\block\VanillaBlocks;
+use pocketmine\color\Color;
 use pocketmine\data\bedrock\EnchantmentIds;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockBurnEvent;
 use pocketmine\event\block\BlockGrowEvent;
 use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityExplodeEvent;
+use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
+use pocketmine\event\player\PlayerDropItemEvent;
 use pocketmine\event\player\PlayerInteractEvent;
+use pocketmine\event\player\PlayerItemUseEvent;
+use pocketmine\event\player\PlayerJoinEvent;
+use pocketmine\event\player\PlayerQuitEvent;
 use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\inventory\transaction\InventoryTransaction;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\enchantment\FireAspectEnchantment;
@@ -21,11 +29,18 @@ use pocketmine\item\VanillaItems;
 use pocketmine\network\mcpe\protocol\PlayerActionPacket;
 use pocketmine\network\mcpe\protocol\types\PlayerAction;
 use pocketmine\player\GameMode;
+use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\SingletonTrait;
+use pocketmine\utils\TextFormat;
+use pocketmine\world\sound\NoteInstrument;
+use pocketmine\world\sound\NoteSound;
+use pocketmine\world\sound\XpCollectSound;
 use pocketmine\world\WorldManager;
 use ReflectionException;
 use ReflectionProperty;
+use TechnoBoty\AntWarsNeo\Arenas\Arena;
+use TechnoBoty\AntWarsNeo\Arenas\ArenaManager;
 use TechnoBoty\AntWarsNeo\WorldGenerator\VoidGenerator;
 
 class EventsListener implements Listener{
@@ -36,8 +51,13 @@ class EventsListener implements Listener{
         self::setInstance($this);
     }
     public function onPlace(BlockPlaceEvent $event){
-        $p = $event->getBlockAgainst()->getPosition();
-        Server::getInstance()->broadcastMessage($p->getFloorX()." | ".$p->getFloorY()." | ".$p->getFloorZ());
+        $arena = ArenaManager::getInstance()->getArenaByPlayer($event->getPlayer());
+        if($arena != NULL && $event->getPlayer()->getGamemode()->equals(GameMode::CREATIVE())) {
+            $p = $event->getBlockAgainst()->getPosition();
+            Server::getInstance()->broadcastMessage($p->getFloorX() . " | " . $p->getFloorY() . " | " . $p->getFloorZ());
+        } elseif($arena != NULL && $arena?->getStage() == Arena::WAIT_STAGE){
+            $event->cancel();
+        }
     }
 
     /**
@@ -45,9 +65,12 @@ class EventsListener implements Listener{
      */
     public function onBreak(BlockBreakEvent $event){
         $world = $event->getBlock()->getPosition()->getWorld();
+        if(Server::getInstance()->getWorldManager()->getDefaultWorld()->getFolderName() == $world->getFolderName()){$event->cancel();return;}
+        $arena = ArenaManager::getInstance()->getArenaByPlayer($event->getPlayer());
+        if($arena != null && $event->getPlayer()->getGamemode()->equals(GameMode::CREATIVE())){return;}
+        if($arena != NULL && $arena?->getStage() == Arena::WAIT_STAGE){$event->cancel();return;}
         ($gen = new ReflectionProperty($world,"generator"))->setAccessible(TRUE);
         if($gen->getValue($world) == VoidGenerator::class){
-            if($event->getPlayer()->getGamemode()->equals(GameMode::CREATIVE())){return;}
             switch($event->getBlock()->getIdInfo()->getBlockTypeId()){
                 case VanillaBlocks::GLASS()->getIdInfo()->getBlockTypeId():
                     if(mt_rand(1,2) == 2){
@@ -105,6 +128,12 @@ class EventsListener implements Listener{
         $event->setYield(0.0);
     }
     public function onInteract(PlayerInteractEvent $event){
+        $world = Server::getInstance()->getWorldManager()->getDefaultWorld();
+        $world2 = $event->getPlayer()->getWorld();
+        $arena = ArenaManager::getInstance()->getArenaByPlayer($event->getPlayer());
+        if($event->getAction() != PlayerInteractEvent::RIGHT_CLICK_BLOCK && $arena != NULL && $arena?->getStage() == Arena::WAIT_STAGE){$event->cancel();return;}
+        if( $world->getFolderName() == $world2->getFolderName()){$event->cancel();return;}
+        if($event->getBlock()->getIdInfo()->getBlockTypeId() != VanillaBlocks::ENCHANTING_TABLE()->getIdInfo()->getBlockTypeId()){return;}
         $inv = $event->getPlayer()->getInventory();
         $hand = $inv->getItemInHand();
         if($inv->contains(VanillaItems::LAPIS_LAZULI()->setCount(1))){
@@ -121,7 +150,16 @@ class EventsListener implements Listener{
                         break;
                 }
                 $event->getPlayer()->getXpManager()->setXpLevel($event->getPlayer()->getXpManager()->getXpLevel() - 1);
+                $event->getPlayer()->getInventory()->remove(VanillaItems::LAPIS_LAZULI()->setCount(1));
+                $event->getPlayer()->getWorld()->addSound($event->getPlayer()->getPosition(),new XpCollectSound(),[$event->getPlayer()]);
+                $event->getPlayer()->sendMessage(TextFormat::GOLD."Успешно зачаровано предмет в руке!");
+            } else {
+                $event->getPlayer()->getWorld()->addSound($event->getPlayer()->getPosition(),new NoteSound(NoteInstrument::BASS_DRUM(),3),[$event->getPlayer()]);
+                $event->getPlayer()->sendMessage(TextFormat::RED."Недостаточно опыта!");
             }
+        } else {
+            $event->getPlayer()->getWorld()->addSound($event->getPlayer()->getPosition(),new NoteSound(NoteInstrument::BASS_DRUM(),3),[$event->getPlayer()]);
+            $event->getPlayer()->sendMessage(TextFormat::RED."Недостаточно лазурита!");
         }
     }
 
@@ -172,5 +210,55 @@ class EventsListener implements Listener{
         }
         return VanillaEnchantments::MENDING();
     }
-
+    public function onUse(PlayerItemUseEvent $event){
+        if($event->getItem()->getTypeId() == VanillaBlocks::WOOL()->asItem()->getTypeId()){
+            $event->getPlayer()->sendMessage("В розработке!");
+        }elseif($event->getItem()->getTypeId() == VanillaBlocks::REDSTONE()->asItem()->getTypeId()){
+            $arena = ArenaManager::getInstance()->getArenaByPlayer($event->getPlayer());
+            $arena?->quit($event->getPlayer());
+            $this->equip($event->getPlayer());
+        }
+    }
+    public function onJoin(PlayerJoinEvent $event){
+        $player = $event->getPlayer();
+        $this->equip($player);
+    }
+    public function onQuit(PlayerQuitEvent $event){
+        $player = $event->getPlayer();
+        $arena = ArenaManager::getInstance()->getArenaByPlayer($player);
+        $arena?->quit($player);
+    }
+    public function onTransaction(InventoryTransactionEvent $event){
+        $player = $event->getTransaction()->getSource();
+        $arena = ArenaManager::getInstance()->getArenaByPlayer($player);
+        if($player->getWorld()->getFolderName() == Server::getInstance()->getWorldManager()->getDefaultWorld()->getFolderName()){
+            $event->cancel();
+        }elseif($arena != NULL && $arena->getStage() == Arena::WAIT_STAGE){
+            $event->cancel();
+        }
+    }
+    public function onDrop(PlayerDropItemEvent $event){
+        $player = $event->getPlayer();
+        $arena = ArenaManager::getInstance()->getArenaByPlayer($player);
+        if($player->getWorld()->getFolderName() == Server::getInstance()->getWorldManager()->getDefaultWorld()->getFolderName()){
+            $event->cancel();
+        }elseif($arena != NULL && $arena->getStage() == Arena::WAIT_STAGE){
+            $event->cancel();
+        }
+    }
+    public function equip(Player $player) : void{
+        $default = Server::getInstance()->getWorldManager()->getDefaultWorld()->getSafeSpawn();
+        $player->setGamemode(GameMode::ADVENTURE());
+        $player->teleport($default);
+        $inv = $player->getInventory();
+        $inv->clearAll();
+        $games = VanillaItems::EMERALD()->setCustomName(TextFormat::GOLD."Выбрать игру")->setLore(["SummerWorld"]);
+        $friends = VanillaItems::BOOK()->setCustomName(TextFormat::RED."Друзья/Пати")->setLore(["SummerWorld"]);
+        $donate = VanillaItems::NETHERITE_SCRAP()->setCustomName(TextFormat::DARK_PURPLE."Донат")->setLore(["SummerWorld"]);
+        $show = VanillaItems::DYE()->setColor(DyeColor::LIME())->setCustomName(TextFormat::DARK_AQUA."Показать/Скрыть игроков")->setLore(["SummerWorld"]);
+        $inv->setItem(1,$games);
+        $inv->setItem(3,$friends);
+        $inv->setItem(5,$show);
+        $inv->setItem(7,$donate);
+    }
 }
