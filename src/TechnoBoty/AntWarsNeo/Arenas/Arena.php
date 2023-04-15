@@ -45,9 +45,15 @@ class Arena{
             unset($this->players[$player->getName()]);
         }
         $player->teleport(new Position(0,100,0,Server::getInstance()->getWorldManager()->getDefaultWorld()));
-        $this->arena->deleteWorld();
+        if(count($this->players) == 0){
+            $this->lockedFlag = TRUE;
+            ArenaManager::getInstance()->unsetArena($this);
+        }
     }
     public function alreadyJoin() : bool{
         return !$this->lockedFlag;
+    }
+    public function __destruct(){
+        $this->arena->deleteWorld();
     }
 }

@@ -13,7 +13,7 @@ class VoidGenerator extends Generator{
     private array $chance = [
         "sand" => 15.1,
         "glass" => 15.0,
-        "cobblestone" => 20.0,
+        "cobblestone" => 19.0,
         "log" => 20.0,
         "iron_ore" => 5.0,
         "leaves" => 4.0,
@@ -28,7 +28,8 @@ class VoidGenerator extends Generator{
         "soul" => 1.0,
         "anvil" => 0.4,
         "potion" => 0.4,
-        "enchant" => 0.1
+        "enchant" => 0.1,
+        "netherite" => 1.0
     ];
 
     private array $blocks;
@@ -96,6 +97,9 @@ class VoidGenerator extends Generator{
                         break;
                     case "soul":
                         $this->blocks[] = VanillaBlocks::SOUL_SAND();
+                        break;
+                    case "netherite":
+                        $this->blocks[] = VanillaBlocks::ANCIENT_DEBRIS();
                         break;
                 }
             }

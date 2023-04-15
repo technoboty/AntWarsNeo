@@ -2,7 +2,9 @@
 
 namespace TechnoBoty\AntWarsNeo\Arenas;
 
+use pocketmine\scheduler\Task;
 use pocketmine\utils\SingletonTrait;
+use TechnoBoty\AntWarsNeo\Main;
 
 class ArenaManager{
 
@@ -14,8 +16,8 @@ class ArenaManager{
     }
     public function getArena() : Arena{
         if(count($this->arenas) >= 1) {
-            foreach($this->arenas as $arena) {
-                if($arena->alreadyJoin()) {
+            foreach($this->arenas as $arena){
+                if($arena->alreadyJoin()){
                     return $arena;
                 }
             }
@@ -23,5 +25,22 @@ class ArenaManager{
         $arena = new Arena();
         $this->arenas[] = $arena;
         return $arena;
+    }
+    public function _unset(int $key) : void{
+        if(array_key_exists($key,$this->arenas)){
+            unset($this->arenas[$key]);
+        }
+    }
+    public function unsetArena(Arena $arena) : void{
+        $key =  array_search($arena,$this->arenas);
+        if(!is_bool($key)){
+            Main::getInstance()->getScheduler()->scheduleDelayedTask(new class($key,$this) extends Task{
+
+                public function __construct(private int $key,private ArenaManager $manager){}
+                public function onRun(): void{
+                    $this->manager->_unset($this->key);
+                }
+            },100);
+        }
     }
 }
