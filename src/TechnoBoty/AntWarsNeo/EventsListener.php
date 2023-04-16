@@ -2,15 +2,12 @@
 
 namespace TechnoBoty\AntWarsNeo;
 
-use pocketmine\block\TNT;
 use pocketmine\block\utils\DyeColor;
 use pocketmine\block\VanillaBlocks;
-use pocketmine\color\Color;
-use pocketmine\data\bedrock\EnchantmentIds;
 use pocketmine\event\block\BlockBreakEvent;
-use pocketmine\event\block\BlockBurnEvent;
-use pocketmine\event\block\BlockGrowEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\entity\EntityDamageByEntityEvent;
+use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityExplodeEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
@@ -19,15 +16,10 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
-use pocketmine\event\server\DataPacketReceiveEvent;
-use pocketmine\inventory\transaction\InventoryTransaction;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
-use pocketmine\item\enchantment\FireAspectEnchantment;
 use pocketmine\item\enchantment\VanillaEnchantments;
 use pocketmine\item\VanillaItems;
-use pocketmine\network\mcpe\protocol\PlayerActionPacket;
-use pocketmine\network\mcpe\protocol\types\PlayerAction;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\Server;
@@ -36,11 +28,11 @@ use pocketmine\utils\TextFormat;
 use pocketmine\world\sound\NoteInstrument;
 use pocketmine\world\sound\NoteSound;
 use pocketmine\world\sound\XpCollectSound;
-use pocketmine\world\WorldManager;
 use ReflectionException;
 use ReflectionProperty;
 use TechnoBoty\AntWarsNeo\Arenas\Arena;
 use TechnoBoty\AntWarsNeo\Arenas\ArenaManager;
+use TechnoBoty\AntWarsNeo\Forms\InGameForms;
 use TechnoBoty\AntWarsNeo\WorldGenerator\VoidGenerator;
 
 class EventsListener implements Listener{
@@ -212,7 +204,7 @@ class EventsListener implements Listener{
     }
     public function onUse(PlayerItemUseEvent $event){
         if($event->getItem()->getTypeId() == VanillaBlocks::WOOL()->asItem()->getTypeId()){
-            $event->getPlayer()->sendMessage("В розработке!");
+            InGameForms::getInstance()->onSelectTeam($event->getPlayer());
         }elseif($event->getItem()->getTypeId() == VanillaBlocks::REDSTONE()->asItem()->getTypeId()){
             $arena = ArenaManager::getInstance()->getArenaByPlayer($event->getPlayer());
             $arena?->quit($event->getPlayer());
@@ -230,6 +222,7 @@ class EventsListener implements Listener{
         $player = $event->getPlayer();
         $arena = ArenaManager::getInstance()->getArenaByPlayer($player);
         $arena?->quit($player);
+        $arena?->getTeamGroup()->quitTeam($player);
     }
     public function onTransaction(InventoryTransactionEvent $event){
         $player = $event->getTransaction()->getSource();
@@ -247,6 +240,18 @@ class EventsListener implements Listener{
             $event->cancel();
         }elseif($arena != NULL && $arena->getStage() == Arena::WAIT_STAGE){
             $event->cancel();
+        }
+    }
+    public function onDamage(EntityDamageEvent $event){
+        if($event instanceof EntityDamageByEntityEvent) {
+            if($event->getEntity() instanceof Player) {
+                $arena = ArenaManager::getInstance()->getArenaByPlayer($event->getEntity());
+                if($event->getEntity()->getWorld()->getFolderName() == Server::getInstance()->getWorldManager()->getDefaultWorld()->getFolderName()) {
+                    $event->cancel();
+                }elseif($arena != NULL && $arena->getStage() == Arena::WAIT_STAGE){
+                    $event->cancel();
+                }
+            }
         }
     }
     public function equip(Player $player) : void{

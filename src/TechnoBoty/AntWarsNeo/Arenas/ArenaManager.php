@@ -43,7 +43,7 @@ class ArenaManager{
                 public function onRun(): void{
                     $this->manager->_unset($this->key);
                 }
-            },100);
+            },20);
         }
     }
     public function getArenaByPlayer(Player $player) : ?Arena{

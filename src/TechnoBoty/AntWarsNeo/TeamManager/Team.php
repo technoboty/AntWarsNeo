@@ -6,34 +6,34 @@ use pocketmine\player\Player;
 
 class Team{
 
-    private int $teamNumber;
+    private string $teamName;
 
     private array $players;
 
-    private int $masPlayers;
+    private int $maxPlayers;
 
-    public function __construct(int $teamNumber,int $maxPlayers,$players = []){
-        $this->teamNumber = $teamNumber;
+    public function __construct(string $name,int $maxPlayers,$players = []){
+        $this->teamName = $name;
         $this->players = $players;
-        $this->masPlayers = $maxPlayers;
+        $this->maxPlayers = $maxPlayers;
     }
-    public function getTeamNumber() : int{
-        return $this->teamNumber;
+    public function getTeamName() : string{
+        return $this->teamName;
     }
     public function getMaxPlayers() : int{
-        return $this->masPlayers;
+        return $this->maxPlayers;
     }
     public function getPlayers() : array{
         return $this->players;
     }
     public function addPlayer(Player $player) : void{
         if(!in_array($player,$this->players)){
-            $this->players[] = $player;
+            $this->players[$player->getName()] = $player;
         }
     }
     public function removePlayer(Player $player) : void{
-        if(in_array($player,$this->players)){
-            unset($this->players[array_search($player,$this->players)]);
+        if(array_key_exists($player->getName(),$this->players)){
+            unset($this->players[$player->getName()]);
         }
     }
 }

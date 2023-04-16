@@ -11,11 +11,12 @@ use pocketmine\utils\TextFormat;
 use pocketmine\world\Position;
 use TechnoBoty\AntWarsNeo\MapManager\Map;
 use TechnoBoty\AntWarsNeo\MapManager\MapManager;
+use TechnoBoty\AntWarsNeo\TeamManager\TeamGroup;
 
 class Arena{
 
     //Const
-    private const MAX_PLAYERS = 16;
+    public const MAX_PLAYERS = 16;
 
     public const WAIT_STAGE = 0;
     private const I_STAGE = 1;
@@ -31,9 +32,12 @@ class Arena{
 
     private Map $arena;
 
+    private TeamGroup $group;
+
     public function __construct(){
         $this->arena = MapManager::getInstance()->addNewArena();
         $this->stage = self::WAIT_STAGE;
+        $this->group = new TeamGroup();
     }
     public function join(Player $player) : void{
         if($this->lockedFlag){return;}
@@ -98,6 +102,9 @@ class Arena{
             case 3:
                 break;
         }
+    }
+    public function getTeamGroup() : TeamGroup{
+        return $this->group;
     }
     public function __destruct(){
         $this->arena->deleteWorld();
