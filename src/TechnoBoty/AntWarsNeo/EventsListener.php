@@ -217,6 +217,9 @@ class EventsListener implements Listener{
             $arena = ArenaManager::getInstance()->getArenaByPlayer($event->getPlayer());
             $arena?->quit($event->getPlayer());
             $this->equip($event->getPlayer());
+        }elseif($event->getItem()->getTypeId() == VanillaItems::EMERALD()->getTypeId()){
+            $event->getPlayer()->sendMessage(TextFormat::GREEN."Выполняеться поиск игры...");
+            ArenaManager::getInstance()->getArena()->join($event->getPlayer());
         }
     }
     public function onJoin(PlayerJoinEvent $event){

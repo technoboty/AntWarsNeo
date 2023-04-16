@@ -23,6 +23,7 @@ class Arena{
     private const III_STAGE = 3;
     private const IV_STAGE = 4;
 
+    /** @var Player[] $players  */
     private array $players = [];
     private int $stage;
 
@@ -41,6 +42,7 @@ class Arena{
             $player->teleport(new Position(0,64,0,$this->arena->getWorld()));
             if(count($this->players) == self::MAX_PLAYERS){$this->lockedFlag = TRUE;}
             $this->equip($player);
+            $this->onMessage(1,$player);
         }
     }
     public function quit(Player $player) : void{
@@ -52,6 +54,7 @@ class Arena{
             $this->lockedFlag = TRUE;
             ArenaManager::getInstance()->unsetArena($this);
         }
+        $this->onMessage(2,$player);
     }
     public function alreadyJoin() : bool{
         return !$this->lockedFlag;
@@ -64,12 +67,37 @@ class Arena{
     }
     public function equip(Player $player) : void{
         $inv = $player->getInventory();
-        $player->setGamemode(GameMode::SURVIVAL());
+        $player->setGamemode(GameMode::ADVENTURE());
         $inv->clearAll();
         $select = VanillaBlocks::WOOL()->asItem()->setCustomName(TextFormat::BLUE."Выбрать команду")->setLore(["SummerWorld"]);
         $quit = VanillaBlocks::REDSTONE()->asItem()->setCustomName(TextFormat::RED."Вернуться в хаб")->setLore(["SummerWorld"]);
         $inv->setItem(2,$select);
         $inv->setItem(6,$quit);
+    }
+    private function onMessage(int $type,?Player $player) : void{
+        switch($type){
+            case 1:
+                $count = count($this->players);
+                $max = self::MAX_PLAYERS;
+                foreach($this->players as $pl){
+                    $pl->sendMessage(TextFormat::YELLOW."{$player->getName()} присоиденился ".TextFormat::DARK_PURPLE."[{$count} / $max]");
+                }
+                break;
+            case 2:
+                $count = count($this->players);
+                $max = self::MAX_PLAYERS;
+                foreach($this->players as $pl){
+                    if($pl->isConnected()){
+                        $pl->sendMessage(TextFormat::YELLOW . "{$player->getName()} вышел " . TextFormat::DARK_PURPLE . "[{$count} / $max]");
+                    }
+                }
+                if($player->isConnected()){
+                    $player->sendMessage(TextFormat::YELLOW . "{$player->getName()} вышел " . TextFormat::DARK_PURPLE . "[{$count} / $max]");
+                }
+                break;
+            case 3:
+                break;
+        }
     }
     public function __destruct(){
         $this->arena->deleteWorld();
