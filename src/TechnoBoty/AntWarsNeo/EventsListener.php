@@ -217,6 +217,7 @@ class EventsListener implements Listener{
     public function onJoin(PlayerJoinEvent $event){
         $player = $event->getPlayer();
         $this->equip($player);
+        Main::getInstance()->sendDefaultScoreBoard($player);
     }
     public function onQuit(PlayerQuitEvent $event){
         $player = $event->getPlayer();

@@ -56,4 +56,12 @@ class ArenaManager{
         }
         return null;
     }
+    public function getArenaByWorldName(string $name) : ?Arena{
+        foreach($this->arenas as $arena){
+            if($arena->getMap()->getWorld()->getFolderName() == $name){
+                return $arena;
+            }
+        }
+        return null;
+    }
 }
