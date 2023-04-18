@@ -33,6 +33,8 @@ use ReflectionProperty;
 use TechnoBoty\AntWarsNeo\Arenas\Arena;
 use TechnoBoty\AntWarsNeo\Arenas\ArenaManager;
 use TechnoBoty\AntWarsNeo\Forms\InGameForms;
+use TechnoBoty\AntWarsNeo\GameSession\BaseGameSession;
+use TechnoBoty\AntWarsNeo\SettingsArenas\SquadSettings;
 use TechnoBoty\AntWarsNeo\WorldGenerator\VoidGenerator;
 
 class EventsListener implements Listener{
@@ -211,7 +213,7 @@ class EventsListener implements Listener{
             $this->equip($event->getPlayer());
         }elseif($event->getItem()->getTypeId() == VanillaItems::EMERALD()->getTypeId()){
             $event->getPlayer()->sendMessage(TextFormat::GREEN."Выполняеться поиск игры...");
-            ArenaManager::getInstance()->getArena()->join($event->getPlayer());
+            ArenaManager::getInstance()->getArena(new SquadSettings())->join($event->getPlayer());
         }
     }
     public function onJoin(PlayerJoinEvent $event){

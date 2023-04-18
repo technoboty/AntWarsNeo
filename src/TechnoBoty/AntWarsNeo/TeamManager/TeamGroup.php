@@ -6,6 +6,7 @@ use pocketmine\player\Player;
 use pocketmine\utils\TextFormat;
 use TechnoBoty\AntWarsNeo\Arenas\Arena;
 use TechnoBoty\AntWarsNeo\Arenas\ArenaManager;
+use TechnoBoty\AntWarsNeo\SettingsArenas\Settings;
 
 class TeamGroup {
 
@@ -13,9 +14,16 @@ class TeamGroup {
 
     private array $teams = [];
 
-    public function __construct() {
-        foreach(self::TEAM_LIST as $name) {
-            $this->teams[$name] = new Team($name, Arena::MAX_PLAYERS / count(self::TEAM_LIST));
+    public function __construct(?Settings $data){
+        if(!$data == null){
+            $maxPlayers = $data::MAX_PLAYERS;
+            foreach($data::TEAM_LIST as $name){
+                $this->teams[$name] = new Team($name,$maxPlayers / count($data::TEAM_LIST));
+            }
+        } else {
+            foreach (self::TEAM_LIST as $name) {
+                $this->teams[$name] = new Team($name, 16 / count(self::TEAM_LIST));
+            }
         }
     }
 
@@ -74,7 +82,6 @@ class TeamGroup {
     }
 
     /**
-     * Nuzhno proverit
      * @param array $players
      * @return void
      */
@@ -90,7 +97,10 @@ class TeamGroup {
         foreach($playersOutTeam as $pl) {
             $count = $this->teamCount();
             uasort($count, function(int $a, int $b) { return $a <=> $b; });
-            $this->getTeam(array_search(array_shift($count), $count))->addPlayer($pl);
+            foreach($count as $team => $val){
+                $this->getTeam($team)->addPlayer($pl);
+                break;
+            }
         }
     }
 }

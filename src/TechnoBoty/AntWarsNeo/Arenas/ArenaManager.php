@@ -7,6 +7,7 @@ use pocketmine\player\Player;
 use pocketmine\scheduler\Task;
 use pocketmine\utils\SingletonTrait;
 use TechnoBoty\AntWarsNeo\Main;
+use TechnoBoty\AntWarsNeo\SettingsArenas\Settings;
 
 class ArenaManager{
 
@@ -17,15 +18,15 @@ class ArenaManager{
     public function __construct(){
         self::setInstance($this);
     }
-    public function getArena() : Arena{
-        if(count($this->arenas) >= 1) {
+    public function getArena(?Settings $data) : Arena{
+        if(count($this->arenas) >= 1){
             foreach($this->arenas as $arena){
                 if($arena->alreadyJoin()){
                     return $arena;
                 }
             }
         }
-        $arena = new Arena();
+        $arena = new Arena($data);
         $this->arenas[] = $arena;
         return $arena;
     }
