@@ -34,6 +34,11 @@ class InGameScoreboards{
             }
         }
     }
+    public function removeInLobbyScoreboard(array $players) : void{
+        foreach($players as $player){
+            $player->getNetworkSession()->sendDataPacket(RemoveObjectivePacket::create("inlobby"));
+        }
+    }
     public function setScoreboardLine(int $score, string $line,string $name,Player $player): void{
         $entry = new ScorePacketEntry();
         $entry->objectiveName = $name;

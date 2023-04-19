@@ -220,12 +220,16 @@ class EventsListener implements Listener{
         $player = $event->getPlayer();
         $this->equip($player);
         Main::getInstance()->sendDefaultScoreBoard($player);
+        $player->getEffects()->clear();
+        $player->getXpManager()->setXpAndProgress(0,0.0);
+        $event->setJoinMessage("");
     }
     public function onQuit(PlayerQuitEvent $event){
         $player = $event->getPlayer();
         $arena = ArenaManager::getInstance()->getArenaByPlayer($player);
         $arena?->quit($player);
         $arena?->getTeamGroup()->quitTeam($player);
+        $event->setQuitMessage("");
     }
     public function onTransaction(InventoryTransactionEvent $event){
         $player = $event->getTransaction()->getSource();

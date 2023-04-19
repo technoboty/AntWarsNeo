@@ -14,7 +14,7 @@ class TeamGroup {
 
     private array $teams = [];
 
-    public function __construct(?Settings $data){
+    public function __construct(private ?Settings $data){
         if(!$data == null){
             $maxPlayers = $data::MAX_PLAYERS;
             foreach($data::TEAM_LIST as $name){
@@ -38,7 +38,7 @@ class TeamGroup {
         return NULL;
     }
 
-    public function joinTeam(string $name, Player $player): void {
+    public function joinTeam(string $name, Player $player): void{
         $team = $this->getTeamByPlayer($player);
         $count = $this->teamCount();
         $countPlayers = count(ArenaManager::getInstance()->getArenaByPlayer($player)->getPlayers());
@@ -50,7 +50,8 @@ class TeamGroup {
             $team?->removePlayer($player);
             $needTeam = $this->getTeam($name);
             $needTeam?->addPlayer($player);
-            $player->sendMessage("Вы присоиденились к команде $name");
+            $text = $this->data?->colorizeTeamName($name);
+            $player->sendMessage(TextFormat::GRAY."Вы присоиденились к команде $text");
         } else {
             $player->sendMessage(TextFormat::RED . "Команда заполнена!");
         }
@@ -98,6 +99,8 @@ class TeamGroup {
             $count = $this->teamCount();
             uasort($count, function(int $a, int $b) { return $a <=> $b; });
             foreach($count as $team => $val){
+                $text = $this->data?->colorizeTeamName($team);
+                $pl->sendMessage(TextFormat::GRAY."Вас автоматически было определенно в команду $text");
                 $this->getTeam($team)->addPlayer($pl);
                 break;
             }

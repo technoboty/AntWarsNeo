@@ -18,6 +18,7 @@ use TechnoBoty\AntWarsNeo\Main;
 use TechnoBoty\AntWarsNeo\MapManager\Map;
 use TechnoBoty\AntWarsNeo\MapManager\MapManager;
 use TechnoBoty\AntWarsNeo\Scoreboard\InGameScoreboards;
+use TechnoBoty\AntWarsNeo\Scoreboard\ScoreboardSession;
 use TechnoBoty\AntWarsNeo\SettingsArenas\Settings;
 use TechnoBoty\AntWarsNeo\SettingsArenas\SquadSettings;
 use TechnoBoty\AntWarsNeo\TeamManager\Team;
@@ -50,24 +51,16 @@ class Arena {
 
     private BaseGameSession $session;
 
+    private ScoreboardSession $scoreboardSession;
+
     public function __construct(?Settings $data){
         $this->arena = MapManager::getInstance()->addNewArena();
         $this->stage = self::WAIT_STAGE;
         $this->session = new BaseGameSession($this->arena->getWorld()->getFolderName(),$data);
         $this->group = new TeamGroup($data);
-        $this->sidebar = Main::getInstance()->getScheduler()->scheduleRepeatingTask(new class($this->arena->getWorld()->getFolderName()) extends Task {
-
-            public function __construct(private string $arena) { }
-
-            public function onRun(): void {
-                $arena = ArenaManager::getInstance()->getArenaByWorldName($this->arena);
-                if($arena != NULL) {
-                    $arena->sendSideBar();
-                } else {
-                    $this->getHandler()->cancel();
-                }
-            }
-        }, 20);
+        $this->scoreboardSession = new ScoreboardSession($this->arena->getWorld()->getFolderName());
+        $this->scoreboardSession->setCurrentStage(ScoreboardSession::IN_LOBBY);
+        $this->scoreboardSession->showInScoreboard();
     }
 
     public function join(Player $player): void {
@@ -82,11 +75,9 @@ class Arena {
             }
             $this->equip($player);
             $this->onMessage(1, $player);
-            $lines = $this->getLines();
-            InGameScoreboards::getInstance()->setInLobbyScoreBoard($this->players, $lines);
-            if(count($this->players) >= $this->session->getSettingData()::MIN_PLAYERS) {
+            if(count($this->players) >= $this->session->getSettingData()::MIN_PLAYERS){
                 $this->session->onStart();
-                //TODO
+                $this->incrementStage();
             }
         }
     }
@@ -109,7 +100,7 @@ class Arena {
         $this->onMessage(2, $player);
         if(count($this->players) < $this->session->getSettingData()::MIN_PLAYERS){
             $this->session->onStop();
-
+            $this->decrementStage();
         }
     }
     public function getSession() : BaseGameSession{
@@ -126,10 +117,6 @@ class Arena {
 
     public function getStage(): int {
         return $this->stage;
-    }
-
-    public function updateStage(int $stage): void {
-        $this->stage = $stage;
     }
 
     public function getMap(): Map {
@@ -150,7 +137,7 @@ class Arena {
         switch($type) {
             case 1:
                 $count = count($this->players);
-                $max = self::MAX_PLAYERS;
+                $max = $this->session->getSettingData()::MAX_PLAYERS;
                 foreach($this->players as $pl) {
                     $pl->sendMessage(TextFormat::YELLOW . "{$player->getName()} присоиденился " . TextFormat::DARK_PURPLE . "[{$count} / $max]");
                 }
@@ -175,41 +162,20 @@ class Arena {
     public function getTeamGroup(): TeamGroup {
         return $this->group;
     }
-    public function swapStage() : void{
+    public function getScoreboard() : ScoreboardSession{
+        return $this->scoreboardSession;
+    }
+    public function incrementStage() : void{
         if($this->stage < self::IV_STAGE){
             $this->stage++;
         }
     }
-
-    public function sendSideBar(): void {
-        if($this->stage == self::WAIT_STAGE || $this->stage == self::START_STAGE) {
-            $lines = $this->getLines();
-            foreach($this->players as $player) {
-                $player->getNetworkSession()->sendDataPacket(RemoveObjectivePacket::create("inlobby"));
-                InGameScoreboards::getInstance()->setInLobbyScoreBoard([$player], $lines);
-            }
+    public function decrementStage() : void{
+        if($this->stage > self::WAIT_STAGE){
+            $this->stage--;
         }
     }
-
-    public function __destruct() {
-        $this->sidebar->cancel();
+    public function __destruct(){
         $this->arena->deleteWorld();
-    }
-
-    private function getLines(): array {
-        $lobby = TextFormat::YELLOW . $this->arena->getWorld()->getFolderName();
-        $count = count($this->players);
-        $max = self::MAX_PLAYERS;
-        $status = TextFormat::DARK_PURPLE . "Ожидание игры ";
-        $donate = TextFormat::GOLD . "summer-world.me ";
-        $clock = $this->session->getTimer();
-        $lines = [
-            1 => "Лобби: $lobby ",
-            2 => "Статус: $status ",
-            3 => "Игроков:" . TextFormat::RED . " $count / $max ",
-            4 => "До старта: ".TextFormat::GOLD.$clock." сек.",
-            5 => "Донат: $donate "
-        ];
-        return $lines;
     }
 }

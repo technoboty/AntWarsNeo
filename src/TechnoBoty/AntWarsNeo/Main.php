@@ -29,7 +29,7 @@ class Main extends PluginBase{
         self::setInstance($this);
         @mkdir($this->getDataFolder()."settings");
         @mkdir($this->getDataFolder()."statistic");
-        $this->config = new Config($this->getDataFolder()."settings/config.json",Config::JSON,["red" => [-25,56,-25],"blue" => [24,56,24],"green" => [-25,3,24],"yellow" => [24,3,-25]]);
+        $this->config = new Config($this->getDataFolder()."settings/config.json",Config::JSON,[]);
         Server::getInstance()->getPluginManager()->registerEvents(new EventsListener(),$this);
         GeneratorManager::getInstance()->addGenerator(VoidGenerator::class,"antwars",fn() => NULL,TRUE);
         $this->manager = ArenaManager::getInstance();
@@ -41,6 +41,7 @@ class Main extends PluginBase{
             $arena  = ArenaManager::getInstance()->getArenaByPlayer($sender);
             if($arena != null){
                 $arena->getSession()->onStart();
+                $arena->incrementStage();
             }
         }elseif($command->getName() == "tpa"){
             $this->manager->getArena()->quit($sender);

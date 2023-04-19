@@ -17,6 +17,9 @@ class MapManager{
     public string $name;
     private string $pattern = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-+=.";
 
+    private string $UpPattern = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    private string $DownPattern = "abcdefghijklmnopqrstuvwxyz";
+
     use SingletonTrait;
 
     public function __construct(){
@@ -34,12 +37,13 @@ class MapManager{
     }
     public function generateWorldName() : string{
         $list = str_split($this->pattern,1);
+        $UpList = str_split($this->UpPattern,1);
+        $DownList = str_split($this->DownPattern,1);
         $name = "";
         do{
-            $name = "";
-            for($i=0;$i <= 10;$i++){
-                $name .= $list[mt_rand(0,count($list) - 1)];
-            }
+            $name .= $UpList[mt_rand(0,count($UpList) - 1)];
+            $name .= mt_rand(11111,99999);
+            $name .= $DownList[mt_rand(0,count($DownList) - 1)];
         }while(!$this->validateWorldName($name));
         return $name;
     }
