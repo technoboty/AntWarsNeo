@@ -97,6 +97,14 @@ class Arena {
             }
             Main::getInstance()->sendDefaultScoreBoard($player);
         }
+        $team = $this->getTeamGroup()->getTeamByPlayer($player);
+        $this->getTeamGroup()->quitTeam($player);
+        if($team != null && $this->stage != self::WAIT_STAGE && $this->stage != self::START_STAGE && count($team->getPlayers()) == 0){
+            $color = $this->getSession()->getSettingData()->colorizeTeamName($team->getTeamName());
+            foreach($this->players as $player){
+                $player->sendMessage(TextFormat::GRAY."Команда $color".TextFormat::GRAY." истреблена!");
+            }
+        }
         $this->onMessage(2, $player);
         if(count($this->players) < $this->session->getSettingData()::MIN_PLAYERS){
             $this->session->onStop();
@@ -149,9 +157,6 @@ class Arena {
                     if($pl->isConnected()) {
                         $pl->sendMessage(TextFormat::YELLOW . "{$player->getName()} вышел " . TextFormat::DARK_PURPLE . "[{$count} / $max]");
                     }
-                }
-                if($player->isConnected()) {
-                    $player->sendMessage(TextFormat::YELLOW . "{$player->getName()} вышел " . TextFormat::DARK_PURPLE . "[{$count} / $max]");
                 }
                 break;
             case 3:

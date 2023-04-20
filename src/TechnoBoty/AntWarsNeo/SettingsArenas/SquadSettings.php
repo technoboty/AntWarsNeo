@@ -18,6 +18,10 @@ final class SquadSettings implements Settings{
 
     public const MAX_PLAYERS = 16;
 
+    public const TIME_GLOWING = 43;
+
+    public const TIME_DEATH_MATH = 12;
+
     public function colorizeTeamName(string $name){
         switch($name){
             case "red":

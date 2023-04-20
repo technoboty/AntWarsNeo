@@ -66,6 +66,27 @@ class ScoreboardSession{
                     InGameScoreboards::getInstance()->setInGameScoreboard($players, $this->getIstageLines($player), "1stage");
                 }
                 break;
+            case self::IN_II_STAGE:
+                foreach(ArenaManager::getInstance()->getArenaByWorldName($this->arenaName)?->getPlayers() as $player){
+                    $player->getNetworkSession()->sendDataPacket(RemoveObjectivePacket::create("1stage"));
+                    $player->getNetworkSession()->sendDataPacket(RemoveObjectivePacket::create("2stage"));
+                    InGameScoreboards::getInstance()->setInGameScoreboard($players, $this->getIIstageLines($player), "2stage");
+                }
+                break;
+            case self::IN_III_STAGE:
+                foreach(ArenaManager::getInstance()->getArenaByWorldName($this->arenaName)?->getPlayers() as $player){
+                    $player->getNetworkSession()->sendDataPacket(RemoveObjectivePacket::create("2stage"));
+                    $player->getNetworkSession()->sendDataPacket(RemoveObjectivePacket::create("3stage"));
+                    InGameScoreboards::getInstance()->setInGameScoreboard($players, $this->getIIIstageLines($player), "3stage");
+                }
+                break;
+            case self::IN_IV_STAGE:
+                foreach(ArenaManager::getInstance()->getArenaByWorldName($this->arenaName)?->getPlayers() as $player){
+                    $player->getNetworkSession()->sendDataPacket(RemoveObjectivePacket::create("3stage"));
+                    $player->getNetworkSession()->sendDataPacket(RemoveObjectivePacket::create("4stage"));
+                    InGameScoreboards::getInstance()->setInGameScoreboard($players, $this->getIVstageLines($player), "4stage");
+                }
+                break;
         }
     }
     private function getLobbyLines(): array {
@@ -94,8 +115,74 @@ class ScoreboardSession{
         $lines = [
             1 => "Лобби: $lobby ",
             2 => "Ваша команда $team ",
-            3 => "Стадия: ".TextFormat::GOLD."1 подсветка ",
+            3 => "Стадия: ".TextFormat::GOLD."I подсветка ",
             4 => "До подсветки: ".TextFormat::RED."$timer "."сек.",
+            5 => "Живые команды: "
+        ];
+        foreach($arena->getTeamGroup()->getTeams() as $team){
+            if(count($team->getPlayers()) > 0){
+                $count = count($team->getPlayers());
+                $lines[] = " - ".$data->colorizeTeamName($team->getTeamName())." ($count)  ";
+            }
+        }
+        $lines[] = "Донат: ".TextFormat::GOLD."summer-world.me  ";
+        return $lines;
+    }
+    private function getIIstageLines(Player $player) : array{
+        $arena = ArenaManager::getInstance()->getArenaByWorldName($this->arenaName);
+        $team = (new SquadSettings())->colorizeTeamName($arena->getTeamGroup()->getTeamByPlayer($player)->getTeamName());
+        $lobby = TextFormat::YELLOW . $arena?->getMap()->getWorld()->getFolderName();
+        $data = $arena->getSession()->getSettingData();
+        $timer = $arena->getSession()->getTimer();
+        $lines = [
+            1 => "Лобби: $lobby ",
+            2 => "Ваша команда $team ",
+            3 => "Стадия: ".TextFormat::GOLD."II подсветка ",
+            4 => "До подсветки: ".TextFormat::RED."$timer "."сек.",
+            5 => "Живые команды: "
+        ];
+        foreach($arena->getTeamGroup()->getTeams() as $team){
+            if(count($team->getPlayers()) > 0){
+                $count = count($team->getPlayers());
+                $lines[] = " - ".$data->colorizeTeamName($team->getTeamName())." ($count)  ";
+            }
+        }
+        $lines[] = "Донат: ".TextFormat::GOLD."summer-world.me  ";
+        return $lines;
+    }
+    private function getIIIstageLines(Player $player) : array{
+        $arena = ArenaManager::getInstance()->getArenaByWorldName($this->arenaName);
+        $team = (new SquadSettings())->colorizeTeamName($arena->getTeamGroup()->getTeamByPlayer($player)->getTeamName());
+        $lobby = TextFormat::YELLOW . $arena?->getMap()->getWorld()->getFolderName();
+        $data = $arena->getSession()->getSettingData();
+        $timer = $arena->getSession()->getTimer();
+        $lines = [
+            1 => "Лобби: $lobby ",
+            2 => "Ваша команда $team ",
+            3 => "Стадия: ".TextFormat::GOLD."III подсветка ",
+            4 => "До подсветки: ".TextFormat::RED."$timer "."сек.",
+            5 => "Живые команды: "
+        ];
+        foreach($arena->getTeamGroup()->getTeams() as $team){
+            if(count($team->getPlayers()) > 0){
+                $count = count($team->getPlayers());
+                $lines[] = " - ".$data->colorizeTeamName($team->getTeamName())." ($count)  ";
+            }
+        }
+        $lines[] = "Донат: ".TextFormat::GOLD."summer-world.me  ";
+        return $lines;
+    }
+    private function getIVstageLines(Player $player) : array{
+        $arena = ArenaManager::getInstance()->getArenaByWorldName($this->arenaName);
+        $team = (new SquadSettings())->colorizeTeamName($arena->getTeamGroup()->getTeamByPlayer($player)->getTeamName());
+        $lobby = TextFormat::YELLOW . $arena?->getMap()->getWorld()->getFolderName();
+        $data = $arena->getSession()->getSettingData();
+        $timer = $arena->getSession()->getTimer();
+        $lines = [
+            1 => "Лобби: $lobby ",
+            2 => "Ваша команда $team ",
+            3 => "Стадия: ".TextFormat::GOLD."Дезматч ",
+            4 => "До дезматча: ".TextFormat::RED."$timer "."сек.",
             5 => "Живые команды: "
         ];
         foreach($arena->getTeamGroup()->getTeams() as $team){

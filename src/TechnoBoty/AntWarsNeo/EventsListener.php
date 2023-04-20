@@ -6,6 +6,7 @@ use pocketmine\block\utils\DyeColor;
 use pocketmine\block\VanillaBlocks;
 use pocketmine\event\block\BlockBreakEvent;
 use pocketmine\event\block\BlockPlaceEvent;
+use pocketmine\event\block\LeavesDecayEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityExplodeEvent;
@@ -17,10 +18,14 @@ use pocketmine\event\player\PlayerInteractEvent;
 use pocketmine\event\player\PlayerItemUseEvent;
 use pocketmine\event\player\PlayerJoinEvent;
 use pocketmine\event\player\PlayerQuitEvent;
+use pocketmine\event\server\DataPacketSendEvent;
 use pocketmine\item\enchantment\Enchantment;
 use pocketmine\item\enchantment\EnchantmentInstance;
 use pocketmine\item\enchantment\VanillaEnchantments;
 use pocketmine\item\VanillaItems;
+use pocketmine\network\mcpe\protocol\ResourcePackStackPacket;
+use pocketmine\network\mcpe\protocol\StartGamePacket;
+use pocketmine\network\mcpe\protocol\types\Experiments;
 use pocketmine\player\GameMode;
 use pocketmine\player\Player;
 use pocketmine\Server;
@@ -42,8 +47,16 @@ class EventsListener implements Listener{
 
     use SingletonTrait;
 
+    private Experiments $experiments;
+
     public function __construct(){
         self::setInstance($this);
+        $this->experiments = new Experiments(
+            [
+                "data_driven_items" => true,
+                "upcoming_creator_features" => true,
+                "experimental_molang_features" => true
+            ], true);
     }
     public function onPlace(BlockPlaceEvent $event){
         $arena = ArenaManager::getInstance()->getArenaByPlayer($event->getPlayer());
@@ -75,7 +88,7 @@ class EventsListener implements Listener{
                     }
                     break;
                 case VanillaBlocks::SAND()->getIdInfo()->getBlockTypeId():
-                    if(mt_rand(1,3) == 2){
+                    if(mt_rand(1,5) == 2){
                         $event->setDrops([VanillaBlocks::TNT()->asItem()]);
                     } else {
                         $event->setDrops([]);
@@ -131,89 +144,6 @@ class EventsListener implements Listener{
             $event->cancel();
         }
     }
-    public function onInteract(PlayerInteractEvent $event){
-        $world = Server::getInstance()->getWorldManager()->getDefaultWorld();
-        $world2 = $event->getPlayer()->getWorld();
-        $arena = ArenaManager::getInstance()->getArenaByPlayer($event->getPlayer());
-        if($event->getAction() != PlayerInteractEvent::RIGHT_CLICK_BLOCK && $arena != NULL && $arena?->getStage() == Arena::WAIT_STAGE){$event->cancel();return;}
-        if( $world->getFolderName() == $world2->getFolderName()){$event->cancel();return;}
-        if($event->getBlock()->getIdInfo()->getBlockTypeId() != VanillaBlocks::ENCHANTING_TABLE()->getIdInfo()->getBlockTypeId()){return;}
-        $inv = $event->getPlayer()->getInventory();
-        $hand = $inv->getItemInHand();
-        if($inv->contains(VanillaItems::LAPIS_LAZULI()->setCount(1))){
-            if($event->getPlayer()->getXpManager()->getXpLevel() >= 1){
-                switch(TRUE){
-                    case $hand->equals(VanillaItems::WOODEN_SWORD()):
-                    case $hand->equals(VanillaItems::STONE_SWORD()):
-                    case $hand->equals(VanillaItems::IRON_SWORD()):
-                    case $hand->equals(VanillaItems::GOLDEN_SWORD()):
-                    case $hand->equals(VanillaItems::DIAMOND_SWORD()):
-                    case $hand->equals(VanillaItems::NETHERITE_SWORD()):
-                        $inv->setItemInHand($hand->addEnchantment(new EnchantmentInstance($this->getRandomEnchant(0),1)));
-                        $event->cancel();
-                        break;
-                }
-                $event->getPlayer()->getXpManager()->setXpLevel($event->getPlayer()->getXpManager()->getXpLevel() - 1);
-                $event->getPlayer()->getInventory()->remove(VanillaItems::LAPIS_LAZULI()->setCount(1));
-                $event->getPlayer()->getWorld()->addSound($event->getPlayer()->getPosition(),new XpCollectSound(),[$event->getPlayer()]);
-                $event->getPlayer()->sendMessage(TextFormat::GOLD."Успешно зачаровано предмет в руке!");
-            } else {
-                $event->getPlayer()->getWorld()->addSound($event->getPlayer()->getPosition(),new NoteSound(NoteInstrument::BASS_DRUM(),3),[$event->getPlayer()]);
-                $event->getPlayer()->sendMessage(TextFormat::RED."Недостаточно опыта!");
-            }
-        } else {
-            $event->getPlayer()->getWorld()->addSound($event->getPlayer()->getPosition(),new NoteSound(NoteInstrument::BASS_DRUM(),3),[$event->getPlayer()]);
-            $event->getPlayer()->sendMessage(TextFormat::RED."Недостаточно лазурита!");
-        }
-    }
-
-    /** 0 - мечи
-     * 1 - лопаты
-     * 2 - кирки
-     * 3 - топоры
-     * 4 - шлема
-     * 5 - нагрудник
-     * 6 - поножи
-     * 7 - ботинки
-     * @param int $type
-     * @return Enchantment
-     */
-    public function getRandomEnchant(int $type) : Enchantment{
-        switch($type){
-            case 0:
-                $enchants = [
-                    VanillaEnchantments::FIRE_ASPECT(),
-                    VanillaEnchantments::SHARPNESS(),
-                    VanillaEnchantments::KNOCKBACK()];
-                return $enchants[array_rand($enchants)];
-            case 1:
-                $enchants = [
-                    VanillaEnchantments::SILK_TOUCH(),
-                    VanillaEnchantments::EFFICIENCY()];
-                return $enchants[array_rand($enchants)];
-            case 2:
-                $enchants = [
-                    VanillaEnchantments::EFFICIENCY(),
-                    VanillaEnchantments::SILK_TOUCH()];
-                return $enchants[array_rand($enchants)];
-            case 3:
-                $enchants = [
-                    VanillaEnchantments::EFFICIENCY(),
-                    VanillaEnchantments::SHARPNESS(),
-                    VanillaEnchantments::KNOCKBACK()];
-                return $enchants[array_rand($enchants)];
-            case 4:
-            case 5:
-            case 6:
-            case 7:
-            $enchants = [
-                VanillaEnchantments::PROTECTION(),
-                VanillaEnchantments::FIRE_PROTECTION(),
-                VanillaEnchantments::BLAST_PROTECTION()];
-            return $enchants[array_rand($enchants)];
-        }
-        return VanillaEnchantments::MENDING();
-    }
     public function onUse(PlayerItemUseEvent $event){
         if($event->getItem()->getTypeId() == VanillaBlocks::WOOL()->asItem()->getTypeId()){
             InGameForms::getInstance()->onSelectTeam($event->getPlayer());
@@ -238,7 +168,6 @@ class EventsListener implements Listener{
         $player = $event->getPlayer();
         $arena = ArenaManager::getInstance()->getArenaByPlayer($player);
         $arena?->quit($player);
-        $arena?->getTeamGroup()->quitTeam($player);
         $event->setQuitMessage("");
     }
     public function onTransaction(InventoryTransactionEvent $event){
@@ -259,13 +188,18 @@ class EventsListener implements Listener{
             $event->cancel();
         }
     }
+    public function onDropLeaves(LeavesDecayEvent $event){
+        $world = $event->getBlock()->getPosition()->getWorld();
+        ($gen = new ReflectionProperty($world,"generator"))->setAccessible(TRUE);
+        if($gen->getValue($world) == VoidGenerator::class){$event->cancel();}
+    }
     public function onDamage(EntityDamageEvent $event){
         if($event instanceof EntityDamageByEntityEvent) {
             if($event->getEntity() instanceof Player) {
                 $arena = ArenaManager::getInstance()->getArenaByPlayer($event->getEntity());
                 if($event->getEntity()->getWorld()->getFolderName() == Server::getInstance()->getWorldManager()->getDefaultWorld()->getFolderName()) {
                     $event->cancel();
-                }elseif($arena != NULL && $arena->getStage() == Arena::WAIT_STAGE){
+                }elseif($arena != NULL && $arena->getStage() == Arena::WAIT_STAGE || $arena != NULL && $arena->getStage() == Arena::START_STAGE){
                     $event->cancel();
                 }
             }
@@ -286,5 +220,15 @@ class EventsListener implements Listener{
         $inv->setItem(3,$friends);
         $inv->setItem(5,$show);
         $inv->setItem(7,$donate);
+    }
+    public function onDataPacketSend(DataPacketSendEvent $event) : void{
+        foreach($event->getPackets() as $packet){
+            if($packet instanceof StartGamePacket){
+                $packet->levelSettings->experiments = $this->experiments;
+            }
+            if($packet instanceof ResourcePackStackPacket){
+                $packet->experiments = $this->experiments;
+            }
+        }
     }
 }
