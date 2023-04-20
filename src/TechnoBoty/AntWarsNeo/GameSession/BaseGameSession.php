@@ -93,9 +93,12 @@ final class BaseGameSession
     public function decrementTimer() : void{
         $this->secondPerStart--;
     }
+    public function setTimer(int $timer) : void{
+        if($timer <= 0){return;}
+        $this->secondPerStart = $timer;
+    }
     public function startStack() : void{
         $this->teleport();
-        $this->selectStartGamemode();
         $this->addStartTips();
         $this->TipsTimer();
     }
@@ -135,10 +138,13 @@ final class BaseGameSession
     private function TipsTimer() : void{
         $arena = ArenaManager::getInstance()->getArenaByWorldName($this->arenaName);
         if($arena == null){return;}
-        Main::getInstance()->getScheduler()->scheduleRepeatingTask(new class($arena->getPlayers()) extends Task{
+        Main::getInstance()->getScheduler()->scheduleRepeatingTask(new class($arena->getPlayers(),$this->arenaName) extends Task{
 
             private int $iteration = 5;
-            public function __construct(private array $players){}
+            public function __construct(private array $players,private string $arenaName){
+                $arena = ArenaManager::getInstance()->getArenaByWorldName($this->arenaName);
+                $arena?->getSession()->setTimer(420);
+            }
             public function onRun(): void{
                 if($this->iteration != 0){
                     switch($this->iteration){
@@ -183,6 +189,7 @@ final class BaseGameSession
                         /** @var Player $player */
                         $player->setImmobile(false);
                         $player->getEffects()->add(new EffectInstance(VanillaEffects::NIGHT_VISION(),20 * 60 * 45,1,false));
+                        $player->setGamemode(GameMode::SURVIVAL());
                     }
                     $this->getHandler()->cancel();
                 }

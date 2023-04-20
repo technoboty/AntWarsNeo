@@ -9,6 +9,7 @@ use pocketmine\event\block\BlockPlaceEvent;
 use pocketmine\event\entity\EntityDamageByEntityEvent;
 use pocketmine\event\entity\EntityDamageEvent;
 use pocketmine\event\entity\EntityExplodeEvent;
+use pocketmine\event\inventory\CraftItemEvent;
 use pocketmine\event\inventory\InventoryTransactionEvent;
 use pocketmine\event\Listener;
 use pocketmine\event\player\PlayerDropItemEvent;
@@ -115,11 +116,20 @@ class EventsListener implements Listener{
                         $event->setDrops([]);
                     }
                     break;
+                case VanillaBlocks::ANCIENT_DEBRIS()->getIdInfo()->getBlockTypeId():
+                    $event->setDrops([VanillaItems::NETHERITE_SCRAP()->setCount(1)]);
             }
         }
     }
     public function onExplode(EntityExplodeEvent $event){
         $event->setYield(0.0);
+    }
+    public function onCraft(CraftItemEvent $event){
+        $player = $event->getPlayer();
+        $arena = ArenaManager::getInstance()->getArenaByPlayer($player);
+        if($arena == null || $arena?->getStage() == Arena::WAIT_STAGE || $arena?->getStage() == Arena::START_STAGE){
+            $event->cancel();
+        }
     }
     public function onInteract(PlayerInteractEvent $event){
         $world = Server::getInstance()->getWorldManager()->getDefaultWorld();
@@ -236,7 +246,7 @@ class EventsListener implements Listener{
         $arena = ArenaManager::getInstance()->getArenaByPlayer($player);
         if($player->getWorld()->getFolderName() == Server::getInstance()->getWorldManager()->getDefaultWorld()->getFolderName()){
             $event->cancel();
-        }elseif($arena != NULL && $arena->getStage() == Arena::WAIT_STAGE){
+        }elseif($arena != NULL && $arena->getStage() == Arena::WAIT_STAGE || $arena != NULL && $arena->getStage() == Arena::START_STAGE){
             $event->cancel();
         }
     }
@@ -245,7 +255,7 @@ class EventsListener implements Listener{
         $arena = ArenaManager::getInstance()->getArenaByPlayer($player);
         if($player->getWorld()->getFolderName() == Server::getInstance()->getWorldManager()->getDefaultWorld()->getFolderName()){
             $event->cancel();
-        }elseif($arena != NULL && $arena->getStage() == Arena::WAIT_STAGE){
+        }elseif($arena != NULL && $arena->getStage() == Arena::WAIT_STAGE || $arena != NULL && $arena->getStage() == Arena::START_STAGE){
             $event->cancel();
         }
     }
@@ -267,6 +277,7 @@ class EventsListener implements Listener{
         $player->teleport($default);
         $inv = $player->getInventory();
         $inv->clearAll();
+        $player->getArmorInventory()->clearAll();
         $games = VanillaItems::EMERALD()->setCustomName(TextFormat::GOLD."Выбрать игру")->setLore(["SummerWorld"]);
         $friends = VanillaItems::BOOK()->setCustomName(TextFormat::RED."Друзья/Пати")->setLore(["SummerWorld"]);
         $donate = VanillaItems::NETHERITE_SCRAP()->setCustomName(TextFormat::DARK_PURPLE."Донат")->setLore(["SummerWorld"]);

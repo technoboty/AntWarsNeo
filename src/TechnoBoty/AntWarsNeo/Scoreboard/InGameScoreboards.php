@@ -21,16 +21,14 @@ class InGameScoreboards{
     public function __construct(){
         self::setInstance($this);
     }
-    public function setInLobbyScoreBoard(array $players,array $lines) : void{
+    public function setInGameScoreboard(array $players, array $lines,string $name) : void{
         /** @var Player[] $players $pk */
-        $pk = SetDisplayObjectivePacket::create("sidebar","inlobby",$this->name,"dummy",0);
-        $count = count($players);
-        $max = Arena::MAX_PLAYERS;
+        $pk = SetDisplayObjectivePacket::create("sidebar",$name,$this->name,"dummy",0);
         foreach($players as $player){
             $player->getNetworkSession()->sendDataPacket(RemoveObjectivePacket::create("inhub"));
             $player->getNetworkSession()->sendDataPacket($pk);
             foreach($lines as $score => $line){
-                $this->setScoreboardLine($score,$line,"inlobby",$player);
+                $this->setScoreboardLine($score,$line,$name,$player);
             }
         }
     }
@@ -60,8 +58,6 @@ class InGameScoreboards{
     public function setInHubScoreBoard(array $players,array $lines) : void{
         /** @var Player[] $players $pk */
         $pk = SetDisplayObjectivePacket::create("sidebar","inhub",$this->hubName,"dummy",0);
-        $count = count($players);
-        $max = Arena::MAX_PLAYERS;
         foreach($players as $player){
             $player->getNetworkSession()->sendDataPacket($pk);
             foreach($lines as $score => $line){
